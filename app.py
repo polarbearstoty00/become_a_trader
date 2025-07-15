@@ -1,8 +1,15 @@
 import streamlit as st
 import pyupbit
+from pybithumb import Bithumb
 
 st.subheader("Become a trader")
 
 # 업비트 티커 정보 불러오기
-tickers = pyupbit.get_tickers()
-st.write(tickers)
+upbit_tickers = pyupbit.get_tickers()
+st.write("업비트")
+st.write(upbit_tickers)
+
+# 빗썸 티커 정보 불러오기
+bithumb_tickers = Bithumb.get_tickers()
+st.write("빗썸")
+st.write(bithumb_tickers)
