@@ -1,4 +1,5 @@
 import streamlit as st
+import pyupbit
 
 st.subheader("Become a trader")
 
