@@ -16,5 +16,5 @@ st.write("빗썸")
 st.write(bithumb_tickers)
 
 
-df = Bithumb.get_candlestick("BTC", chart_intervals="1m", count=200)
+df = Bithumb.get_candlestick("BTC", chart_intervals="1m")
 st.write(df)
