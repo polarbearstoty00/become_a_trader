@@ -14,3 +14,7 @@ st.write(upbit_krw_tickers)
 bithumb_tickers = Bithumb.get_tickers()
 st.write("빗썸")
 st.write(bithumb_tickers)
+
+
+df = python_bithumb.get_ohlcv("KRW-BTC", interval="day", count=30)
+st.write(df)
