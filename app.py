@@ -1,6 +1,7 @@
 import streamlit as st
 import pyupbit
 from pybithumb import Bithumb
+import python_bithumb
 
 st.subheader("Become a trader")
 
@@ -18,3 +19,8 @@ st.write(bithumb_tickers)
 
 df = Bithumb.get_candlestick("BTC", chart_intervals="1m")
 st.write(df)
+
+
+df_min = python_bithumb.get_ohlcv("KRW-BTC", interval="minute1", count=200)
+st.write("python_bithumb")
+st.write(df_min)
