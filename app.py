@@ -16,5 +16,5 @@ st.write("빗썸")
 st.write(bithumb_tickers)
 
 
-df = Bithumb.get_ohlcv("KRW-BTC", interval="day", count=30)
+df = Bithumb.get_ohlcv("BTC", interval="day", count=30)
 st.write(df)
