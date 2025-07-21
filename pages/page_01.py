@@ -24,3 +24,9 @@ if data:
         st.write("보유 코인이 없습니다.")
 else:
     st.write("잔고 데이터를 불러올 수 없습니다.")
+
+
+
+
+res = requests.get("https://port-0-mywts-investment-flask-02-m8u0vlaa031d4a0d.sel4.cloudtype.app/bithumb/portfolio/summary")
+data = res.json()
