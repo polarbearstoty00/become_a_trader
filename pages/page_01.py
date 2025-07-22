@@ -27,6 +27,19 @@ else:
 
 
 
+st.title("기술적 분석 신호 조회")
 
-res = requests.get("https://port-0-mywts-investment-flask-02-m8u0vlaa031d4a0d.sel4.cloudtype.app/bithumb/portfolio/summary")
-data = res.json()
+if st.button("분석 결과 받아오기"):
+    with st.spinner("서버에서 데이터 받아오는 중..."):
+        try:
+            response = requests.get("http://localhost:5000/api/technicals_analyze")  # Flask 서버 주소
+            response.raise_for_status()
+            data = response.json()
+
+            if data:
+                df = pd.DataFrame(data)
+                st.dataframe(df)
+            else:
+                st.write("데이터가 없습니다.")
+        except Exception as e:
+            st.error(f"데이터 요청 실패: {e}")
