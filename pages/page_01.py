@@ -32,13 +32,23 @@ st.title("기술적 분석 신호 조회")
 if st.button("분석 결과 받아오기"):
     with st.spinner("서버에서 데이터 받아오는 중..."):
         try:
-            response = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate")  
-            response.raise_for_status()
-            data = response.json()
+            # 첫 번째 라우터 호출
+            response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
+            response1.raise_for_status()
+            data1 = response1.json()
 
-            if data:
-                st.json(data["result"])
+            # 두 번째 라우터 호출 (data1을 활용할 수도 있음)
+            response2 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_02")
+            response2.raise_for_status()
+            data2 = response2.json()
+
+            # 결과 출력
+            if data1 and data2:
+                st.subheader("1단계 결과")
+                st.json(data1["result"])
+                st.subheader("2단계 결과")
+                st.json(data2["result"])
             else:
-                st.write("데이터가 없습니다.")
+                st.write("데이터가 부족합니다.")
         except Exception as e:
             st.error(f"데이터 요청 실패: {e}")
