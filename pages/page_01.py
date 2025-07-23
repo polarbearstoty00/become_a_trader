@@ -32,13 +32,12 @@ st.title("기술적 분석 신호 조회")
 if st.button("분석 결과 받아오기"):
     with st.spinner("서버에서 데이터 받아오는 중..."):
         try:
-            response = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/technicals_analyze")  # Flask 서버 주소
+            response = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate")  
             response.raise_for_status()
             data = response.json()
 
             if data:
-                df = pd.DataFrame(data)
-                st.dataframe(df)
+                st.json(data["result"])
             else:
                 st.write("데이터가 없습니다.")
         except Exception as e:
