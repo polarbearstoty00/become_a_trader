@@ -69,22 +69,14 @@ if st.button("분석 결과 받아오기"):
             # 결과 출력
             if data1 and data2:
                 combined_result = data1["result"] + data2["result"]
-
-                # DataFrame으로 변환
-                df = pd.DataFrame(combined_result)
-
-                # 판단값 한글로 바꾸기
-                df["Tech_Signal"] = df["Tech_Signal"].apply(translate_signal)
-                df["MA_Signal"] = df["MA_Signal"].apply(translate_signal)
-                df["Final_Summury"] = df["Final_Summury"].apply(translate_signal)
-
-                # 컬럼명 변경
-                df.rename(columns=column_rename_map, inplace=True)
+                st.write("data1 result", type(data1["result"]), data1["result"])
+                st.write("data2 result", type(data2["result"]), data2["result"])
                 
+                st.write("결합된 원시 데이터", data1["result"] + data2["result"])
+                st.write("combined result", type(combined_result), combined_result)
 
-                st.subheader("분석 결과")
-                st.dataframe(df)
-            else:
-                st.write("데이터가 부족합니다.")
-        except Exception as e:
-            st.error(f"데이터 요청 실패: {e}")
+                if isinstance(combined_result, list) and all(isinstance(row, dict) for row in combined_result):
+                    df = pd.DataFrame(combined_result)
+                    st.dataframe(df)
+                else:
+                    st.error("결합된 결과가 DataFrame으로 변환될 수 없는 형식입니다.")
