@@ -27,6 +27,27 @@ else:
     st.write("잔고 데이터를 불러올 수 없습니다.")
 
 
+# 판단값 변환 함수
+def translate_signal(signal):
+    mapping = {
+        "Strong Sell": "적극매도"
+        "Sell": "매도",
+        "Neutral": "중립",
+        "Buy": "매수",
+        "Strong Buy": "적극매수"
+    }
+    return mapping.get(signal, signal)
+
+# 컬럼명 매핑
+column_rename_map = {
+    "Ticker": "종목코드",
+    "Company": "종목명",
+    "Tech_Signal": "기술등급",
+    "MA_Signal": "이동평균 등급",
+    "Final_Summury": "최종등급"
+}
+
+
 
 st.title("기술적 분석 신호 조회")
 
@@ -47,10 +68,22 @@ if st.button("분석 결과 받아오기"):
 
             # 결과 출력
             if data1 and data2:
-                st.subheader("1단계 결과")
-                st.json(data1["result"])
-                st.subheader("2단계 결과")
-                st.json(data2["result"])
+                combined_result = data1["result"] + data2["result"]
+
+                # DataFrame으로 변환
+                df = pd.DataFrame(combined_result)
+
+                # 판단값 한글로 바꾸기
+                df["Tech_Signal"] = df["Tech_Signal"].apply(translate_signal)
+                df["MA_Signal"] = df["MA_Signal"].apply(translate_signal)
+                df["Final_Summury"] = df["Final_Summury"].apply(translate_signal)
+
+                # 컬럼명 변경
+                df.rename(columns=column_rename_map, inplace=True)
+                
+
+                st.subheader("분석 결과")
+                st.dataframe(df)
             else:
                 st.write("데이터가 부족합니다.")
         except Exception as e:
