@@ -75,8 +75,8 @@ if st.button("분석 결과 받아오기"):
                 st.write("결합된 원시 데이터", data1["result"] + data2["result"])
                 st.write("combined result", type(combined_result), combined_result)
 
-                if isinstance(combined_result, list) and all(isinstance(row, dict) for row in combined_result):
-                    df = pd.DataFrame(combined_result)
-                    st.dataframe(df)
-                else:
-                    st.error("결합된 결과가 DataFrame으로 변환될 수 없는 형식입니다.")
+            if isinstance(combined_result, list) and all(isinstance(row, dict) for row in combined_result):
+                df = pd.DataFrame(combined_result)
+                st.dataframe(df)
+            else:
+                st.error("결합된 결과가 DataFrame으로 변환될 수 없는 형식입니다.")
