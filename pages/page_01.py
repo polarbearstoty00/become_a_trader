@@ -67,16 +67,27 @@ if st.button("분석 결과 받아오기"):
             data2 = response2.json()
 
             # 결과 출력
-            if data1 and data2:
-                combined_result = data1["result"] + data2["result"]
-                st.write("data1 result", type(data1["result"]), data1["result"])
-                st.write("data2 result", type(data2["result"]), data2["result"])
-                
-                st.write("결합된 원시 데이터", data1["result"] + data2["result"])
-                st.write("combined result", type(combined_result), combined_result)
+            combined_result = []
 
-            if isinstance(combined_result, list) and all(isinstance(row, dict) for row in combined_result):
-                df = pd.DataFrame(combined_result)
-                st.dataframe(df)
-            else:
-                st.error("결합된 결과가 DataFrame으로 변환될 수 없는 형식입니다.")
+            if data1 and "result" in data1 and isinstance(data1["result"], list):
+                combined_result.extend(data1["result"])
+
+            if data2 and "result" in data2 and isinstance(data2["result"], list):
+                combined_result.extend(data2["result"])
+
+            # 원시 데이터 확인용 로그
+            st.write("data1 result", type(data1.get("result")), data1.get("result"))
+            st.write("data2 result", type(data2.get("result")), data2.get("result"))
+            st.write("결합된 원시 데이터", combined_result)
+            st.write("combined result", type(combined_result), combined_result)
+
+            # DataFrame 변환 시도
+            try:
+                if isinstance(combined_result, list) and all(isinstance(row, dict) for row in combined_result):
+                    df = pd.DataFrame(combined_result)
+                    st.subheader("최종 분석 결과")
+                    st.dataframe(df)
+                else:
+                    st.error("결합된 결과가 dict들의 리스트가 아닙니다.")
+            except Exception as e:
+                st.error(f"DataFrame 변환 중 오류 발생: {e}")
