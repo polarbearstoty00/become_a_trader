@@ -30,7 +30,7 @@ else:
 # 판단값 변환 함수
 def translate_signal(signal):
     mapping = {
-        "Strong Sell": "적극매도"
+        "Strong Sell": "적극매도",
         "Sell": "매도",
         "Neutral": "중립",
         "Buy": "매수",
