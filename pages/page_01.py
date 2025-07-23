@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
+import time
 
 Upbit_Balance_API_URL = "https://port-0-mywts-investment-flask-m8u0vlaa031d4a0d.sel4.cloudtype.app/upbit_balances"
 
@@ -36,6 +37,8 @@ if st.button("분석 결과 받아오기"):
             response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
             response1.raise_for_status()
             data1 = response1.json()
+
+            time.sleep(60)
 
             # 두 번째 라우터 호출 (data1을 활용할 수도 있음)
             response2 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_02")
