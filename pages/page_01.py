@@ -128,7 +128,7 @@ if st.button("분석 결과 받아오기"):
                 try:
                     df = pd.DataFrame(combined_result)
                     st.write("📊 결합된 데이터:")
-                    st.dataframe(df)
+                    st.dataframe(df, hide_index=True)
                 except Exception as e:
                     st.error(f"[❌] DataFrame 변환 실패: {e}")
 
