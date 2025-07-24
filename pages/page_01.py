@@ -56,10 +56,10 @@ column_rename_map = {
 # 디버깅 출력 여부 설정 : True, False
 DEBUG = False
 
-st.title("기술적 분석 신호 조회")
+st.title("AI 기술적 분석")
 
-if st.button("분석 결과 받아오기"):
-    with st.spinner("서버에서 데이터 받아오는 중..."):
+if st.button("분석 요청"):
+    with st.spinner("AI에게 기술적 분석을 요청중입니다.", show_time=True):
         try:
             # API 호출 - 첫 번째 요청
             response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
@@ -132,7 +132,12 @@ if st.button("분석 결과 받아오기"):
                     if not isinstance(item, dict):
                         st.error(f"[❌] combined_result[{i}]는 딕셔너리가 아님: 타입={type(item)}, 값={item}")
                     else:
-                        st.write(f"[✅] combined_result[{i}]는 딕셔너리: {item}")
+                        # 변환할 컬럼 리스트
+                        for key in ["Tech_Signal", "MA_Signal", "Final_Summury"]:
+                            if key in item:
+                                item[key] = translate_signal(item[key])
+                        if DEBUG:
+                            st.write(f"[✅] combined_result[{i}]는 딕셔너리: {item}")
 
                 # DataFrame 변환
                 try:
