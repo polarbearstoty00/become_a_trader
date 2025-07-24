@@ -51,6 +51,11 @@ column_rename_map = {
 
 
 
+
+
+# 디버깅 출력 여부 설정 : True, False
+DEBUG = False
+
 st.title("기술적 분석 신호 조회")
 
 if st.button("분석 결과 받아오기"):
@@ -60,7 +65,8 @@ if st.button("분석 결과 받아오기"):
             response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
             response1.raise_for_status()
             data1 = response1.json()
-            st.write("📋 data1 전체 응답:", data1)
+            if DEBUG:
+                st.write("📋 data1 전체 응답:", data1)
 
             time.sleep(60)  # 60초 대기
 
@@ -68,7 +74,8 @@ if st.button("분석 결과 받아오기"):
             response2 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_02")
             response2.raise_for_status()
             data2 = response2.json()
-            st.write("📋 data2 전체 응답:", data2)
+            if DEBUG:
+                st.write("📋 data2 전체 응답:", data2)
 
             # 'result' 값 추출
             result1 = data1.get("result")
@@ -83,14 +90,16 @@ if st.button("분석 결과 받아오기"):
             if isinstance(result1, str):
                 try:
                     result1 = json.loads(result1)
-                    st.write("✅ data1 result 문자열을 리스트로 변환:", result1)
+                    if DEBUG:
+                        st.write("✅ data1 result 문자열을 리스트로 변환:", result1)
                 except json.JSONDecodeError as e:
                     st.error(f"❌ data1 result JSON 파싱 실패: {e}, 값={result1}")
                     st.stop()
             if isinstance(result2, str):
                 try:
                     result2 = json.loads(result2)
-                    st.write("✅ data2 result 문자열을 리스트로 변환:", result2)
+                    if DEBUG:
+                        st.write("✅ data2 result 문자열을 리스트로 변환:", result2)
                 except json.JSONDecodeError as e:
                     st.error(f"❌ data2 result JSON 파싱 실패: {e}, 값={result2}")
                     st.stop()
@@ -105,7 +114,8 @@ if st.button("분석 결과 받아오기"):
 
             # 리스트 결합
             combined_result = result1 + result2
-            st.write("✅ combined_result 길이:", len(combined_result))
+            if DEBUG:
+                st.write("✅ combined_result 길이:", len(combined_result))
 
             # 중복된 Ticker 확인
             df_temp = pd.DataFrame(combined_result)
@@ -127,7 +137,8 @@ if st.button("분석 결과 받아오기"):
                 # DataFrame 변환
                 try:
                     df = pd.DataFrame(combined_result)
-                    st.write("📊 결합된 데이터:")
+                    df.rename(columns=column_rename_map, inplace=True)
+                    st.write("📊 데이터:")
                     st.dataframe(df, hide_index=True)
                 except Exception as e:
                     st.error(f"[❌] DataFrame 변환 실패: {e}")
