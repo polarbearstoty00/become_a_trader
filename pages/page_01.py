@@ -55,32 +55,63 @@ st.title("기술적 분석 신호 조회")
 if st.button("분석 결과 받아오기"):
     with st.spinner("서버에서 데이터 받아오는 중..."):
         try:
-            # API 호출
+            # API 호출 - 첫 번째 요청
             response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
             response1.raise_for_status()
             data1 = response1.json()
+            st.write("📋 data1 전체 응답:", data1)
 
             time.sleep(60)  # 60초 대기
 
+            # API 호출 - 두 번째 요청
             response2 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_02")
             response2.raise_for_status()
             data2 = response2.json()
-
-            # 타입 출력
-            st.write("✅ data1 result:", type(data1.get("result")), data1.get("result"))
-            st.write("✅ data2 result:", type(data2.get("result")), data2.get("result"))
+            st.write("📋 data2 전체 응답:", data2)
 
             # 'result' 값 추출
             result1 = data1.get("result")
             result2 = data2.get("result")
 
-            # 리스트 타입 여부 확인
-            if not isinstance(result1, list) or not isinstance(result2, list):
-                st.error("❌ data1 또는 data2의 'result'가 리스트가 아님. combined_result를 생성할 수 없습니다.")
+            # 'result' 키 존재 여부 확인
+            if result1 is None or result2 is None:
+                st.error("❌ 'result' 키가 data1 또는 data2에 없습니다.")
+                st.stop()
+
+            # 문자열인 경우 JSON 파싱
+            if isinstance(result1, str):
+                try:
+                    result1 = json.loads(result1)
+                    st.write("✅ data1 result 문자열을 리스트로 변환:", result1)
+                except json.JSONDecodeError as e:
+                    st.error(f"❌ data1 result JSON 파싱 실패: {e}, 값={result1}")
+                    st.stop()
+            if isinstance(result2, str):
+                try:
+                    result2 = json.loads(result2)
+                    st.write("✅ data2 result 문자열을 리스트로 변환:", result2)
+                except json.JSONDecodeError as e:
+                    st.error(f"❌ data2 result JSON 파싱 실패: {e}, 값={result2}")
+                    st.stop()
+
+            # 리스트 타입 확인
+            if not isinstance(result1, list):
+                st.error(f"❌ data1의 'result'는 리스트가 아님: 타입={type(result1)}, 값={result1}")
+                st.stop()
+            if not isinstance(result2, list):
+                st.error(f"❌ data2의 'result'는 리스트가 아님: 타입={type(result2)}, 값={result2}")
                 st.stop()
 
             # 리스트 결합
             combined_result = result1 + result2
+            st.write("✅ combined_result 길이:", len(combined_result))
+
+            # 중복된 Ticker 확인
+            df_temp = pd.DataFrame(combined_result)
+            duplicate_tickers = df_temp[df_temp.duplicated(subset=["Ticker"], keep=False)]
+            if not duplicate_tickers.empty:
+                st.warning("⚠️ 중복된 Ticker 발견:")
+                st.dataframe(duplicate_tickers)
 
             # combined_result 검사
             if not combined_result:
@@ -88,16 +119,12 @@ if st.button("분석 결과 받아오기"):
             else:
                 for i, item in enumerate(combined_result):
                     if not isinstance(item, dict):
-                        st.error(f"[❌] combined_result[{i}]는 dict가 아님: {type(item)}, 값: {item}")
+                        st.error(f"[❌] combined_result[{i}]는 딕셔너리가 아님: 타입={type(item)}, 값={item}")
                     else:
-                        st.write(f"[✅] combined_result[{i}]는 dict: {item}")
+                        st.write(f"[✅] combined_result[{i}]는 딕셔너리: {item}")
 
-                # DataFrame 변환 시도
+                # DataFrame 변환
                 try:
                     df = pd.DataFrame(combined_result)
+                    st.write("📊 결합된 데이터:")
                     st.dataframe(df)
-                except Exception as e:
-                    st.error(f"[❌] DataFrame 변환 실패: {e}")
-
-        except Exception as e:
-            st.error(f"데이터 요청 실패: {e}")
