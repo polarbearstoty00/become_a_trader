@@ -50,59 +50,62 @@ column_rename_map = {
 
 
 
+import streamlit as st
+import pandas as pd
+import requests
+import time
+
 st.title("기술적 분석 신호 조회")
 
 if st.button("분석 결과 받아오기"):
     with st.spinner("서버에서 데이터 받아오는 중..."):
         try:
-            # 1. 첫 번째 데이터 요청
+            # 1. 첫 번째 데이터 받아오기
             response1 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_01")
             response1.raise_for_status()
             data1 = response1.json()
 
-            # 2. 60초 대기
+            st.success("data1 받아오기 완료")
+            st.write("✅ data1 타입:", type(data1))
+            st.write("✅ data1 preview:", data1[:3] if isinstance(data1, list) else data1)
+
+            # 2. 대기 시간
             time.sleep(60)
 
-            # 3. 두 번째 데이터 요청
+            # 3. 두 번째 데이터 받아오기
             response2 = requests.get("https://port-0-working-task-madmcado69392982.sel4.cloudtype.app/generate_02")
             response2.raise_for_status()
             data2 = response2.json()
 
-            # 4. data1, data2 결과 출력
-            st.write("data1 result", type(data1.get("result")), data1.get("result"))
-            st.write("data2 result", type(data2.get("result")), data2.get("result"))
+            st.success("data2 받아오기 완료")
+            st.write("✅ data2 타입:", type(data2))
+            st.write("✅ data2 preview:", data2[:3] if isinstance(data2, list) else data2)
 
-            # 5. combined_result 생성 (예시: 두 리스트 합치기)
-            # 실제 데이터 구조에 맞게 조정 필요
-            combined_result = []
-            if isinstance(data1.get("result"), list) and isinstance(data2.get("result"), list):
-                combined_result = data1.get("result") + data2.get("result")
-            else:
-                st.warning("data1 또는 data2의 'result'가 리스트가 아님. combined_result를 생성할 수 없습니다.")
+            # 4. 데이터 결합 전 체크
+            if not isinstance(data1, list) or not isinstance(data2, list):
+                st.error("❌ data1 또는 data2가 리스트가 아님. combined_result 생성 불가.")
+                st.stop()
 
-            st.write("결합된 원시 데이터", combined_result)
-            st.write("combined result", type(combined_result), combined_result)
+            # 5. 데이터 결합
+            combined_result = data1 + data2
 
-            # 6. combined_result 구조 점검
             if not combined_result:
-                st.warning("combined_result가 비어있습니다.")
+                st.warning("⚠️ combined_result가 비어있습니다.")
             else:
-                all_dict = True
+                # 구조 점검
                 for i, item in enumerate(combined_result):
                     if not isinstance(item, dict):
-                        all_dict = False
                         st.error(f"[❌] combined_result[{i}]는 dict가 아님: {type(item)}, 값: {item}")
                     else:
                         st.write(f"[✅] combined_result[{i}]는 dict: {item}")
 
-                # 7. DataFrame 변환 시도
-                if all_dict:
-                    try:
-                        df = pd.DataFrame(combined_result)
-                        st.success("DataFrame 변환 성공!")
-                        st.dataframe(df)
-                    except Exception as e:
-                        st.error(f"[❌] DataFrame 변환 실패: {e}")
+                # 6. DataFrame으로 변환
+                try:
+                    df = pd.DataFrame(combined_result)
+                    st.subheader("📊 분석 결과표")
+                    st.dataframe(df)
+                except Exception as e:
+                    st.error(f"[❌] DataFrame 변환 실패: {e}")
 
         except Exception as e:
-            st.error(f"데이터 요청 실패: {e}")
+            st.error(f"[❌] 전체 데이터 처리 중 오류 발생: {e}")
