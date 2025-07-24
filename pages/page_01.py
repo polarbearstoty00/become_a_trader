@@ -32,9 +32,9 @@ else:
 def translate_signal(signal):
     mapping = {
         "Strong Sell": "🔵적극매도",
-        "Sell": "🟢매도",
-        "Neutral": "🟡중립",
-        "Buy": "🟠매수",
+        "Sell": "🔵매도",
+        "Neutral": "🟢중립",
+        "Buy": "🔴매수",
         "Strong Buy": "🔴적극매수"
     }
     return mapping.get(signal, signal)
@@ -45,7 +45,7 @@ column_rename_map = {
     "Company": "종목명",
     "Tech_Signal": "기술등급",
     "MA_Signal": "이동평균 등급",
-    "Final_Summury": "최종등급"
+    "Final_Summury": "요약"
 }
 
 # 디버깅 출력 여부 설정 : True, False
@@ -138,6 +138,7 @@ if st.button("분석 요청"):
                 try:
                     df = pd.DataFrame(combined_result)
                     df.rename(columns=column_rename_map, inplace=True)
+                    desired_order = ["종목코드", "종목명", "요약", "기술등급", "이동평균 등급"]
                     st.write("📊 데이터:")
                     st.dataframe(df, hide_index=True)
                 except Exception as e:
