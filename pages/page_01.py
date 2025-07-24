@@ -31,11 +31,11 @@ else:
 # 판단값 변환 함수
 def translate_signal(signal):
     mapping = {
-        "Strong Sell": "적극매도",
-        "Sell": "매도",
-        "Neutral": "중립",
-        "Buy": "매수",
-        "Strong Buy": "적극매수"
+        "Strong Sell": "🔵적극매도",
+        "Sell": "🟢매도",
+        "Neutral": "🟡중립",
+        "Buy": "🟠매수",
+        "Strong Buy": "🔴적극매수"
     }
     return mapping.get(signal, signal)
 
@@ -47,11 +47,6 @@ column_rename_map = {
     "MA_Signal": "이동평균 등급",
     "Final_Summury": "최종등급"
 }
-
-
-
-
-
 
 # 디버깅 출력 여부 설정 : True, False
 DEBUG = False
