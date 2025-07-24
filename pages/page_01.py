@@ -48,6 +48,11 @@ column_rename_map = {
     "Final_Summury": "요약"
 }
 
+# '요약' 컬럼만 볼드 처리하는 스타일 함수 정의
+def bold_summary(val):
+    return "font-weight: bold" if val else ""
+
+
 # 디버깅 출력 여부 설정 : True, False
 DEBUG = False
 
@@ -138,9 +143,10 @@ if st.button("분석 요청"):
                 try:
                     df = pd.DataFrame(combined_result)
                     df.rename(columns=column_rename_map, inplace=True)
-                    desired_order = ["종목코드", "종목명", "요약", "기술등급", "이동평균 등급"]
+                    # 스타일 적용
+                    styled_df = df.style.applymap(bold_summary, subset=["요약"])
                     st.write("📊 데이터:")
-                    st.dataframe(df, hide_index=True)
+                    st.dataframe(styled_df, hide_index=True)
                 except Exception as e:
                     st.error(f"[❌] DataFrame 변환 실패: {e}")
 
