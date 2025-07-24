@@ -152,3 +152,58 @@ if st.button("분석 요청"):
 
         except Exception as e:
             st.error(f"데이터 요청 실패: {e}")
+
+    with result_container.container():
+        st.write(results_df)
+
+        # 🔎 적극 매수 종목 필터링 및 출력
+        strong_buy_df = results_df[results_df["요약"].str.contains("적극 매수", na=False)]
+
+        if not strong_buy_df.empty:
+            st.subheader(f"🔴 적극 매수 종목 ({strong_buy_df.shape[0]}개)")
+            st.write(strong_buy_df)
+
+
+    # 기술적 분석 요청
+    with st.spinner("🚀 잠시만 기다려 주세요.", show_time=True):
+        try:
+            response = requests.get(
+                "https://port-0-mywts-investment-flask-02-m8u0vlaa031d4a0d.sel4.cloudtype.app/technicals_analysis"
+            )
+            results = response.json()
+        except:
+            st.error("데이터 요청에 실패했습니다.")
+            results = []
+
+    # 성공 메시지 고정 위치 출력
+    st_success_container.success("✅ 실행 완료!")
+
+    # 📊 결과 출력
+    results_df = pd.DataFrame(results)
+    results_df.index += 1
+
+    with result_container.container():
+        st.write(results_df)
+
+        # 🔎 적극 매수 종목 필터링 및 출력
+        strong_buy_df = results_df[results_df["요약"].str.contains("적극 매수", na=False)]
+
+        if not strong_buy_df.empty:
+            st.subheader(f"🔴 적극 매수 종목 ({strong_buy_df.shape[0]}개)")
+            st.write(strong_buy_df)
+            time.sleep(0.1)
+            # 🎧 마지막 음성 안내
+            names = ", ".join(strong_buy_df["종목명"].tolist())
+            text_to_speak = f"적극 매수 종목은 총 {strong_buy_df.shape[0]}개입니다. 종목명은 {names} 입니다."
+            tts = gTTS(text=text_to_speak, lang="ko")
+            buffer = io.BytesIO()
+            tts.write_to_fp(buffer)
+            buffer.seek(0)
+            base64_audio = base64.b64encode(buffer.read()).decode()
+            html_code = f"""
+            <audio autoplay>
+                <source src="data:audio/mp3;base64,{base64_audio}" type="audio/mp3">
+            </audio>
+            """
+            time.sleep(0.1)
+            audio_container_2.markdown(html_code, unsafe_allow_html=True)
